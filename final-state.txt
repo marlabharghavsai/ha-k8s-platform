@@ -1,0 +1,31 @@
+NAME                           READY   STATUS    RESTARTS      AGE
+pod/postgres-0                 1/1     Running   0             22m
+pod/web-app-75d79fd4c9-5dwhl   1/1     Running   0             25m
+pod/web-app-75d79fd4c9-9cdfh   1/1     Running   2 (25m ago)   64m
+pod/web-app-75d79fd4c9-b7vmv   1/1     Running   1 (25m ago)   64m
+
+NAME                  TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+service/postgres      ClusterIP   None           <none>        5432/TCP       3h55m
+service/web-service   NodePort    10.96.171.90   <none>        80:31057/TCP   4h12m
+
+NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/web-app   3/3     3            3           4h12m
+
+NAME                                 DESIRED   CURRENT   READY   AGE
+replicaset.apps/web-app-66db686688   0         0         0       78m
+replicaset.apps/web-app-6d4876ccb    0         0         0       139m
+replicaset.apps/web-app-744585b75    0         0         0       138m
+replicaset.apps/web-app-74d8ff5ccb   0         0         0       171m
+replicaset.apps/web-app-75d79fd4c9   3         3         3       64m
+replicaset.apps/web-app-76788d96c9   0         0         0       126m
+replicaset.apps/web-app-77bfd577dc   0         0         0       4h10m
+replicaset.apps/web-app-795f78b96b   0         0         0       153m
+replicaset.apps/web-app-7b7657f7c4   0         0         0       171m
+replicaset.apps/web-app-8bbbfd558    0         0         0       64m
+replicaset.apps/web-app-bff876cbb    0         0         0       126m
+
+NAME                        READY   AGE
+statefulset.apps/postgres   1/1     3h9m
+
+NAME                                              REFERENCE            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/web-app-hpa   Deployment/web-app   cpu: 1%/60%   3         10        3          59m
