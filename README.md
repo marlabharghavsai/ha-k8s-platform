@@ -11,24 +11,25 @@ The goal of this task is to design, deploy, and validate a **production-ready Ku
 - Maintain database connectivity
 - Follow cloud-native design principles
 
----
 
 ## 🧱 Architecture Overview
 ```
-| Kubernetes |
-| |
-| +----------------------+ |
-| | Web App Deployment | |
-| | (3+ replicas, HPA) | |
-| +----------+-----------+ |
-| | |
-| ClusterIP Service |
-| | |
-| +----------v-----------+ |
-| | PostgreSQL StatefulSet | |
-| | Persistent Volume | |
-| +----------------------+ |
-| |
++--------------------------------------------------+
+|                  Kubernetes                      |
+|                                                  |
+|   +------------------------------------------+   |
+|   |        Web App Deployment                |   |
+|   |        (3+ replicas, HPA enabled)        |   |
+|   +--------------------+---------------------+   |
+|                        |                         |
+|                ClusterIP Service                 |
+|                        |                         |
+|   +--------------------v---------------------+   |
+|   |      PostgreSQL StatefulSet              |   |
+|   |      Persistent Volume (PVC)             |   |
+|   +------------------------------------------+   |
+|                                                  |
++--------------------------------------------------+
 
 ```
 ## Features Implemented
@@ -143,30 +144,35 @@ kubectl top pods -n ha-platform
 
  ## Docker Image
 - The web application is packaged using a multi-stage-ready Dockerfile with:
+  - Minimal Node.js base image
+  - Dependency installation
+  - Optimized runtime image
+```
+FROM node:18-alpine
+WORKDIR /app
+COPY src/package.json ./
+RUN npm install
+COPY src/index.js ./
+EXPOSE 3000
+CMD ["node", "index.js"]
+```
 
-Minimal Node.js base image
+## Best Practices Followed
+- No database dependency in liveness probe
+- Readiness probe ensures traffic only to healthy pods
+- Connection pooling for PostgreSQL
+- Anti-affinity to spread pods across nodes
+- Graceful shutdown handling
+- Persistent storage for stateful workloads
 
-Dependency installation
+## Known Limitations (Out of Scope)
+- No PostgreSQL leader election (Patroni not used)
+- No TLS termination (can be added with Ingress)
+- No external monitoring (Prometheus/Grafana)
 
-Optimized runtime image
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## Future Enhancements
+- Add Ingress Controller (NGINX)
+- Enable TLS (HTTPS)
+- Add PostgreSQL replication
+- Integrate Prometheus & Grafana
+- CI/CD pipeline integration
